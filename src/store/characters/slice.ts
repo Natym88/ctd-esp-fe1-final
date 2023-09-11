@@ -26,7 +26,7 @@ export type Character = CharacterComplete & {
 
 export type CharacterState = {
     characters : Character[],
-    selectedCharacter: Character | null,
+    filteredCharacters: Character[] | null,
     isLoading : boolean,
     isError : string | null
 }
@@ -34,7 +34,7 @@ export type CharacterState = {
 
 const initialState : CharacterState  = {
     characters : [],
-    selectedCharacter: null,
+    filteredCharacters: null,
     isLoading : false,
     isError : null
 }
@@ -53,6 +53,14 @@ export const characterSlice = createSlice({
             const findCharacter = state.characters.find( c => c.id === action.payload);
             if(findCharacter){
                 findCharacter.esFavorito = false;
+            }
+        },
+        FILTER_CHARACTERS : (state, action : PayloadAction<string>) => {
+            let filteredCharacters: Character[];
+            if(action.payload === "") {
+                state.filteredCharacters = state.characters;
+            } else {
+                state.filteredCharacters = state.characters.filter( c => new RegExp(action.payload, 'i').test(c.name))
             }
         }
     },
@@ -78,5 +86,5 @@ export const characterSlice = createSlice({
 
 
 const characterReducer = characterSlice.reducer;
-export const { ADD_FAVORITE, DROP_FAVORITE } = characterSlice.actions;
+export const { ADD_FAVORITE, DROP_FAVORITE, FILTER_CHARACTERS } = characterSlice.actions;
 export default characterReducer;
