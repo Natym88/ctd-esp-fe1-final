@@ -18,8 +18,8 @@ const Filtros = ({filter}: FilterProps) => {
 
     useEffect(() => {
         const getData = setTimeout(() => {
-            if(valor != '')
-                filter(valor)
+            if(valor !== '')
+                filter(`name=${valor}`)
         }, 2000)
         return () => clearTimeout(getData)
     }, [valor])

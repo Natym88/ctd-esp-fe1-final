@@ -1,7 +1,6 @@
 import { useAppDispatch } from '../../store';
+import { Data } from '../../store/characters/slice';
 import { CHANGE_PAGE } from '../../store/characters/thunks';
-import { Data } from '../../store/paginator/slice';
-import { GET_DATA } from '../../store/paginator/thunks';
 import './paginacion.css';
 
 export interface DataProps {
@@ -23,14 +22,12 @@ const Paginacion = ({data}: DataProps) => {
     const nextHandler = () => {
         if(data.next) {
             dispatch(CHANGE_PAGE(data.next));
-            dispatch(GET_DATA(data.next));
         }
     }
 
     const prevHandler = () => {
         if (data.prev) {
             dispatch(CHANGE_PAGE(data.prev));
-            dispatch(GET_DATA(data.prev));
         }
     }
 

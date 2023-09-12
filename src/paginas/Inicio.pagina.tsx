@@ -2,9 +2,7 @@ import Filtros from "../componentes/personajes/filtros.componente"
 import GrillaPersonajes from "../componentes/personajes/grilla-personajes.componente"
 import Paginacion from "../componentes/paginacion/paginacion.componente";
 import { useAppDispatch, useAppSelector } from "../store";
-import { CHANGE_PAGE, FILTERED_CHARACTERS, GET_CHARACTERS } from "../store/characters/thunks";
-import { GET_DATA } from "../store/paginator/thunks";
-import BASE_URL from "../shared/enviroment/APIConfig";
+import { FILTERED_CHARACTERS, GET_CHARACTERS } from "../store/characters/thunks";
  
 /**
  * Esta es la pagina principal. Aquí se debera ver el panel de filtros junto con la grilla de personajes.
@@ -16,18 +14,15 @@ import BASE_URL from "../shared/enviroment/APIConfig";
  */
 const PaginaInicio = () => {
 
-    const { characters, isLoading, isError } = useAppSelector((state) => state.character);
-    const {data} = useAppSelector((state) => state.data)
+    const { characters, isLoading, isError, data } = useAppSelector((state) => state.character);
 
     const dispatch = useAppDispatch();
 
     const filterHandler = (filtro: string) => {
         if(filtro === '') {
             dispatch(GET_CHARACTERS())
-            dispatch(GET_DATA(''))
         } else {
             dispatch(FILTERED_CHARACTERS(filtro))
-            dispatch(GET_DATA(`${BASE_URL}character/?name=${filtro}`))
         }
     }
 

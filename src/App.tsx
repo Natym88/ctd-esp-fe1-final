@@ -7,16 +7,14 @@ import PaginaDetalle from "./paginas/Detalle.pagina";
 import Encabezado from "./componentes/layout/encabezado.componente";
 import { GET_CHARACTERS } from './store/characters/thunks';
 import { useAppDispatch } from './store';
-import { GET_DATA } from './store/paginator/thunks';
 
 function App() {
 
   const dispatch = useAppDispatch();
-  
-  useEffect(() => {
-    dispatch(GET_CHARACTERS());
-    dispatch(GET_DATA(''));
-}, [])
+
+    useEffect(() => {
+        dispatch(GET_CHARACTERS());
+    }, [dispatch])
 
   return (
     <div className="App">

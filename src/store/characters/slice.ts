@@ -1,12 +1,24 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { CHANGE_PAGE, FILTERED_CHARACTERS, GET_CHARACTERS } from './thunks';
+import { CHANGE_PAGE, CHARACTER_DETAILS, FILTERED_CHARACTERS, GET_CHARACTERS } from './thunks';
 
 export interface Location {
     name: string,
     url: string
 }
 
-export interface CharacterComplete {
+export interface APIResponse {
+    info: Data,
+    results: Character[]
+}
+
+export type Data = {
+    count: number,
+    pages: number,
+    next: string | null,
+    prev: string | null
+}
+
+export type Character = {
     id: number,
     name: string,
     image: string,
@@ -18,23 +30,25 @@ export interface CharacterComplete {
     origin: Location,
     location: Location,
     episode: string[],
-    created: string
-}
-export type Character = CharacterComplete & {
+    created: string,
     esFavorito: boolean
 }
 
 export type CharacterState = {
+    data: Data | null,
     characters : Character[],
     favoriteCharacters: Character[],
+    details: Character | null,
     isLoading : boolean,
     isError : string | null
 }
 
 
 const initialState : CharacterState  = {
+    data: null,
     characters : [],
     favoriteCharacters: [],
+    details: null,
     isLoading : false,
     isError : null
 }
@@ -45,6 +59,9 @@ export const characterSlice = createSlice({
     reducers : {
         ADD_FAVORITE : (state, action : PayloadAction<number>) => {
             const findCharacter = state.characters.find( c => c.id === action.payload);
+            if(state.details && state.details.id === action.payload) {
+                state.details.esFavorito = true;
+            }
             if(findCharacter){
                 findCharacter.esFavorito = true;
                 state.favoriteCharacters.push(findCharacter)
@@ -67,8 +84,9 @@ export const characterSlice = createSlice({
             state.isLoading = true;
         })
 
-        builder.addCase(GET_CHARACTERS.fulfilled, (state, action : PayloadAction<Character[]>) => {
-            state.characters = action.payload;
+        builder.addCase(GET_CHARACTERS.fulfilled, (state, action : PayloadAction<APIResponse>) => {
+            state.characters = action.payload.results;
+            state.data = action.payload.info;
             state.characters.forEach( c => { c.esFavorito = !!state.favoriteCharacters.find(fc => fc.id === c.id) })
             state.isLoading = false;
         })
@@ -82,8 +100,9 @@ export const characterSlice = createSlice({
             state.isLoading = true;
         })
 
-        builder.addCase(CHANGE_PAGE.fulfilled, (state, action : PayloadAction<Character[]>) => {
-            state.characters = action.payload;
+        builder.addCase(CHANGE_PAGE.fulfilled, (state, action : PayloadAction<APIResponse>) => {
+            state.characters = action.payload.results;
+            state.data = action.payload.info;
             state.characters.forEach(c => {c.esFavorito = !!state.favoriteCharacters.find(fc => fc.id === c.id) })
             state.isLoading = false;
         })
@@ -97,13 +116,29 @@ export const characterSlice = createSlice({
             state.isLoading = true;
         })
 
-        builder.addCase(FILTERED_CHARACTERS.fulfilled, (state, action : PayloadAction<Character[]>) => {
-            state.characters = action.payload;
+        builder.addCase(FILTERED_CHARACTERS.fulfilled, (state, action : PayloadAction<APIResponse>) => {
+            state.characters = action.payload.results;
+            state.data = action.payload.info;
             state.characters.forEach( c => { c.esFavorito = !!state.favoriteCharacters.find(fc => fc.id === c.id) })
             state.isLoading = false;
         })
 
         builder.addCase(FILTERED_CHARACTERS.rejected, ( state, action ) => {
+            state.isLoading = false;
+            state.isError = action.error.message ??  'Hay un error';
+        })
+
+        builder.addCase(CHARACTER_DETAILS.pending, ( state ) => {
+            state.isLoading = true;
+        })
+
+        builder.addCase(CHARACTER_DETAILS.fulfilled, (state, action : PayloadAction<Character>) => {
+            state.details = action.payload;
+            state.details.esFavorito = !!state.favoriteCharacters.find(fc => fc.id === action.payload.id);
+            state.isLoading = false;
+        })
+
+        builder.addCase(CHARACTER_DETAILS.rejected, ( state, action ) => {
             state.isLoading = false;
             state.isError = action.error.message ??  'Hay un error';
         })

@@ -1,10 +1,10 @@
 import "./Detalle.css";
 import BotonFavorito from "../componentes/botones/boton-favorito.componente";
 import TarjetaEpisodio from "../componentes/episodios/tarjeta-episodio.componente";
-import { useAppSelector } from "../store";
-import { Character } from "../store/characters/slice";
+import { useAppDispatch, useAppSelector } from "../store";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { CHARACTER_DETAILS } from "../store/characters/thunks";
 
 /**
  * Esta es la pagina de detalle. Aqui se puede mostrar la vista sobre el personaje seleccionado junto con la lista de episodios en los que aparece
@@ -21,29 +21,34 @@ import { useParams } from "react-router-dom";
 const PaginaDetalle = () => {
 
     const id = useParams() as any;
-    const { characters } = useAppSelector((state) => state.character)
-    const personaje: Character | undefined = characters.find( p => p.id === parseInt(id.id))  
+    const dispatch = useAppDispatch();
+    const {details, isLoading} = useAppSelector((state) => state.character)
     
-    useEffect(() => {},[, personaje]) 
+    useEffect(() => {
+        dispatch(CHARACTER_DETAILS(`${id.id}`))
+    },[id, dispatch]) 
 
     return  <div className="container">
-        {personaje && <><h3>{personaje.name}</h3>
+        {isLoading ? <div>...Loading</div> :
+        (details && <><h3>{details.name}</h3>
         <div className={"detalle"}>
-            <div className={"detalle-header"}>
-                <img src={personaje.image} alt={personaje.name}/>
+        <div className={"detalle-header"}>
+                <img src={details.image} alt={details.name}/>
                 <div className={"detalle-header-texto"}>
-
-                    <p>{personaje.name}</p>
-                    <p>Planeta: {personaje.origin.name}</p>
-                    <p>Genero: {personaje.gender}</p>
+                
+                <p>{details.name}</p>
+                <p>Planeta: {details.origin.name}</p>
+                <p>Genero: {details.gender}</p>
                 </div>
-                <BotonFavorito personaje={personaje}/>
-            </div>
-        </div>
-        <h4>Lista de episodios donde apareció el personaje</h4>
-        <div className={"episodios-grilla"}>
-            <TarjetaEpisodio />
-        </div></>}
+                <BotonFavorito personaje={details}/>
+                </div>
+                </div>
+                <h4>Lista de episodios donde apareció el personaje</h4>
+                <div className={"episodios-grilla"}>
+            {details.episode.map( e => (
+                <TarjetaEpisodio key={e} episodeUrl={e} />
+            ))}
+        </div></>)}
     </div>
 }
 

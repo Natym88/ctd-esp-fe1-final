@@ -10,6 +10,7 @@
 .tarjeta-episodio h4{
   margin: 0;
   margin-bottom: 10px;
+  text-align: center;
 }
 
 .tarjeta-episodio > span {
@@ -19,8 +20,7 @@
 }
 
 .tarjeta-episodio div {
-  display: flex;
-  justify-content: space-between;
+  text-align: center;
 }
 
 .tarjeta-episodio div span:nth-child(1) {
