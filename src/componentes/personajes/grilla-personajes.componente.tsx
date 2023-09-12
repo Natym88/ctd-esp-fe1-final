@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom';
 
 export interface PersonajeProps {
     personajes: Character[],
-    favoritos: boolean,
 }
 
 /**
@@ -17,16 +16,14 @@ export interface PersonajeProps {
  * 
  * @returns un JSX element 
  */
-const GrillaPersonajes = ({personajes, favoritos}: PersonajeProps) => {
+const GrillaPersonajes = ({personajes}: PersonajeProps) => {
 
     useEffect(() => {}, [personajes])
     
     return <div className="grilla-personajes">
-        {!favoritos ? personajes.map(p => (
-                <TarjetaPersonaje key={p.id} personaje={p} /> )) :
-            personajes.map(p => (
-                p.esFavorito && <TarjetaPersonaje key={p.id} personaje={p} />
-            ))
+        { personajes.map(p => (
+            <TarjetaPersonaje key={p.id} personaje={p} />
+        ))
         }
     </div>
 }

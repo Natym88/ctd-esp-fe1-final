@@ -1,5 +1,6 @@
 import GrillaPersonajes from "../componentes/personajes/grilla-personajes.componente";
-import { useAppSelector } from "../store";
+import { useAppDispatch, useAppSelector } from "../store";
+import { DROP_ALL_FAVORITES } from "../store/characters/slice";
 
 
 
@@ -13,14 +14,17 @@ import { useAppSelector } from "../store";
  */
 const PaginaFavoritos = () => {
 
-    const { characters } = useAppSelector((state) => state.character);
+    const dispatch = useAppDispatch();
+
+    const { favoriteCharacters } = useAppSelector((state) => state.character);
     
     return <div className="container">
         <div className="actions">
             <h3>Personajes Favoritos</h3>
-            <button className="danger">Test Button</button>
+            {favoriteCharacters.length > 0 && <button className="danger" onClick={() => dispatch(DROP_ALL_FAVORITES())}>Borrar todos</button>}
         </div>
-        <GrillaPersonajes personajes={characters} favoritos={true} />
+        <GrillaPersonajes personajes={favoriteCharacters} />
+        {favoriteCharacters.length == 0 && <h3>No tiene ningún favorito aún</h3> }
     </div>
 }
 
