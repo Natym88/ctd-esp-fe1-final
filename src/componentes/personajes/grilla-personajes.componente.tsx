@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { Character } from '../../store/characters/slice';
 import './grilla-personajes.css';
 import TarjetaPersonaje from './tarjeta-personaje.componente';
-import { Link } from 'react-router-dom';
 
 export interface PersonajeProps {
     personajes: Character[],

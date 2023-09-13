@@ -2,13 +2,14 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import './filtros.css';
 
 export interface FilterProps {
+    filtro: string,
     filter: (filtro: string) => void
 }
 
-const Filtros = ({filter}: FilterProps) => {
-
-    const [inputValue, setInputValue] = useState('');
-    const [valor, setValor] = useState("");
+const Filtros = ({filter, filtro}: FilterProps) => {
+    
+    const [valor, setValor] = useState<string | null>(null);
+    const [inputValue, setInputValue] = useState(filtro);
 
     const onChangeHandler = (event : ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
@@ -18,9 +19,9 @@ const Filtros = ({filter}: FilterProps) => {
 
     useEffect(() => {
         const getData = setTimeout(() => {
-            if(valor !== '')
-                filter(`name=${valor}`)
-        }, 2000)
+            if(valor !== null )
+                filter(valor)
+        }, 800)
         return () => clearTimeout(getData)
     }, [valor])
 

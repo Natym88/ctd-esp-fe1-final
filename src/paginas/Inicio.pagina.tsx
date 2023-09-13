@@ -3,6 +3,7 @@ import GrillaPersonajes from "../componentes/personajes/grilla-personajes.compon
 import Paginacion from "../componentes/paginacion/paginacion.componente";
 import { useAppDispatch, useAppSelector } from "../store";
 import { FILTERED_CHARACTERS, GET_CHARACTERS } from "../store/characters/thunks";
+import { useState } from "react";
  
 /**
  * Esta es la pagina principal. Aquí se debera ver el panel de filtros junto con la grilla de personajes.
@@ -18,11 +19,14 @@ const PaginaInicio = () => {
 
     const dispatch = useAppDispatch();
 
+    const [filtro, setFiltro ] = useState<string>('');
+
     const filterHandler = (filtro: string) => {
+        setFiltro(filtro)
         if(filtro === '') {
             dispatch(GET_CHARACTERS())
         } else {
-            dispatch(FILTERED_CHARACTERS(filtro))
+            dispatch(FILTERED_CHARACTERS(`name=${filtro}`))
         }
     }
 
@@ -33,7 +37,7 @@ const PaginaInicio = () => {
         </div>
         {isLoading ? <p>Loading...</p> :
         <>
-        <Filtros filter={filterHandler} />
+        <Filtros filter={filterHandler} filtro={filtro} />
         {data &&
         <Paginacion data={data} />
         }
